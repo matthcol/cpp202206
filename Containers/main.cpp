@@ -5,86 +5,8 @@
 #include <set>
 #include <list>
 
-/**
- * with iterator implicit (foreach)
-*/
-void display1(const std::vector<int>& vector) {
-	std::cout << vector.size() << "/[";
-	for (const auto& e : vector) {
-		std::cout << e << ",";
-	}
-	std::cout << "]";
-}
+#include "display.h"
 
-/**
-* with iterator explicit (while)
-*/
-void display2(const std::vector<int>& vector) {
-	std::cout << vector.size() << "/[";
-	//std::vector<int>::const_iterator it = vector.cbegin();
-	auto it = vector.cbegin();
-	auto last = vector.cend();
-	if (it != last) {
-		std::cout << *it;
-		++it;
-	}
-	while (it != last) {
-		const auto& e = *it; // if you need the element in a variable
-		std::cout << "," << e ;
-		++it;
-	}
-	std::cout << "]";
-}
-
-/**
-* with iterator explicit (for)
-*/
-void display3(const std::vector<int>& vector) {
-	std::cout << vector.size() << "/[";
-	//std::vector<int>::const_iterator it = vector.cbegin();
-	for (auto it = vector.cbegin(), last = vector.cend(); it != last; ++it)
-	{
-		const auto& e = *it;
-		std::cout << e << ",";
-	}
-	std::cout << "]";
-}
-
-template <class T>
-void displayT(const std::vector<T>& vector) {
-	std::cout << vector.size() << "/[";
-	//std::vector<T>::const_iterator it = vector.cbegin();
-	auto it = vector.cbegin();
-	auto last = vector.cend();
-	if (it != last) {
-		std::cout << *it;
-		++it;
-	}
-	while (it != last) {
-		const auto& e = *it; // if you need the element in a variable
-		std::cout << "," << e;
-		++it;
-	}
-	std::cout << "]";
-}
-
-template <class InputIt>
-void displayIt(InputIt first, InputIt last) {
-	std::cout 
-		// << vector.size() 
-		<< "[";
-
-	if (first != last) {
-		std::cout << *first;
-		++first;
-	}
-	while (first != last) {
-		const auto& e = *first; // if you need the element in a variable
-		std::cout << "," << e;
-		++first;
-	}
-	std::cout << "]";
-}
 
 
 
@@ -106,6 +28,7 @@ void test_vector() {
 		<< nb4 << std::endl
 		<< evenNumbers.size()
 		<< std::endl << std::endl;
+	display2(evenNumbers);
 
 	std::vector<int> bigData(1000000);
 	std::vector<int> bigData2(1000000,1);
@@ -125,17 +48,40 @@ void test_vector() {
 
 void test_vector_set_list() {
 	std::vector<int> evenNumbers{ 10, 2, 4, 22, 6, 8 };
+	// add vector elements in an ordered set
 	std::set<int> orderedEvenNumbers(evenNumbers.cbegin(), evenNumbers.cend());
+	// add an extract of the set in a list
 	std::list<int> listEvenNumbers(orderedEvenNumbers.cbegin(), std::next(orderedEvenNumbers.cbegin(),3));
+
 	displayT(evenNumbers);
-	displayIt(evenNumbers.cbegin(), evenNumbers.cend());
-	displayIt(evenNumbers.begin(), evenNumbers.end());
-	displayIt(evenNumbers.rbegin(), evenNumbers.rend());
-	displayIt(evenNumbers.crbegin(), evenNumbers.crend()-2);
+	displayItOpt(evenNumbers.cbegin(), evenNumbers.cend());
+	displayItOpt(evenNumbers.begin(), evenNumbers.end());
+	displayItOpt(evenNumbers.rbegin(), evenNumbers.rend());
+	displayItOpt(evenNumbers.crbegin(), evenNumbers.crend()-2);
 	std::cout << std::endl;
-	displayIt(orderedEvenNumbers.cbegin(), orderedEvenNumbers.cend());
+	
+	// play with set
+	displayItOpt(orderedEvenNumbers.cbegin(), orderedEvenNumbers.cend());
+	orderedEvenNumbers.insert(3);
+	std::vector<int> others{ 54, 66, 98, 18, 4, 104 };
+	orderedEvenNumbers.insert(others.cbegin(), others.cend());
 	std::cout << std::endl;
-	displayIt(listEvenNumbers.cbegin(), listEvenNumbers.cend());
+	displayItOpt(orderedEvenNumbers.cbegin(), orderedEvenNumbers.cend());
+	std::cout << std::endl;
+	
+	// play with vector
+	evenNumbers.insert(evenNumbers.begin() + 2, 55);
+	evenNumbers.insert(evenNumbers.end() - 1, others.cbegin(), others.cend());
+	displayItOpt(evenNumbers.cbegin(), evenNumbers.cend());
+	displayItOpt(evenNumbers.cbegin(), evenNumbers.cend(), 4);
+	std::cout << std::endl;
+
+	// play with list
+	displayItOpt(listEvenNumbers.cbegin(), listEvenNumbers.cend());
+	std::cout << std::endl;
+	listEvenNumbers.insert(std::next(listEvenNumbers.begin(), 2), 55);
+	listEvenNumbers.insert(std::prev(listEvenNumbers.end(),1), others.cbegin(), others.cend());
+	displayItOpt(listEvenNumbers.cbegin(), listEvenNumbers.cend());
 	std::cout << std::endl;
 }
 
@@ -143,11 +89,18 @@ void test_vector_string() {
 	std::vector<std::string> villes{ "Toulouse", "Balma", "Pau" };
 	villes.push_back("Blagnac");
 	displayT(villes);
+	displayItOpt(villes.cbegin(), villes.cend());
+	std::cout << std::endl;
+	std::cout << "Villes (ou): " << villes << std::endl;
+	std::cerr << "Villes (err): " << villes << std::endl;
 }
 
 void test_vector_vector_string() {
 	std::vector<std::vector<std::string>> villesByDep{ {"Toulouse", "Balma"}, {"Pau", "Bayonne"} };
-	// displayT(villesByDep); // operator << not defined between ostream & vector<string>
+	displayT(villesByDep); // operator << not defined between ostream & vector<string> => ok now
+	std::cout << std::endl
+		<< villesByDep << std::endl; // call twice overload of operator<< with std::vector 
+
 }
 
 void test_arrays() {
@@ -182,5 +135,6 @@ int main(int argc, char* argv[]) // argument en ligne de commande
 	// test_vector();
 	test_vector_set_list();
 	test_vector_string();
+	test_vector_vector_string();
 	return EXIT_SUCCESS;
 }
