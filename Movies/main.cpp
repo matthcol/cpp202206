@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <functional>
 // #include <compare>
 
 #include "Movie.h"
@@ -125,6 +126,35 @@ auto filterYear1983auto(const Movie& movie)
 	return movie.getYear() == 1983;
 }
 
+// sol1: predicate defined with type std::function
+//void find_predicate_aux(
+//	const std::vector<Movie>& movies,
+//	std::function<bool(const Movie&)> moviePredicate)
+// 
+// sol 2: predicate defined with auto type (c++20) 
+//void find_predicate_aux(
+//	const std::vector<Movie>& movies,
+//	auto moviePredicate)
+//
+// sol 3: with template
+template <class MoviePredicate>
+void find_predicate_aux(
+	const std::vector<Movie>& movies,
+	MoviePredicate moviePredicate)
+{
+	auto itFound = std::find_if(
+		movies.cbegin(),
+		movies.cend(),
+		moviePredicate
+	);
+	if (itFound != movies.cend()) {
+		std::cout << "Movie found: " << *itFound << std::endl;
+	}
+	else {
+		std::cout << "Movie not found" << std::endl;
+	}
+}
+
 void test_find_predicate() {
 	// movies in a vector
 	Movie movie1("Star Wars IV", 1977, 120);
@@ -134,90 +164,47 @@ void test_find_predicate() {
 	Movie movie5("Star Wars: Rogue One", 2016, 120);
 	std::vector<Movie> movies{ movie1, movie2, movie3, movie4, movie5 };
 	Movie movieForm("Saturday Night Fever", -1);
+	int year = 1980;
 
-
-	auto itFound = std::find_if(
-		movies.cbegin(), 
-		movies.cend(),
+	find_predicate_aux(
+		movies,
 		[](const Movie& movie)->bool
 		{
 			return movie.getYear() == 1977;
 		});
-	if (itFound != movies.cend()) {
-		std::cout << "Movie found: " << *itFound << std::endl;
-	} else {
-		std::cout << "Movie not found" << std::endl;
-	}
-
-	auto itFound2 = std::find_if(
-		movies.cbegin(),
-		movies.cend(),
+	find_predicate_aux(
+		movies,
 		[](const auto& movie)
 		{
 			return movie.getYear() == 2016;
 		});
-	if (itFound2 != movies.cend()) {
-		std::cout << "Movie found: " << *itFound2 << std::endl;
-	}
-	else {
-		std::cout << "Movie not found" << std::endl;
-	}
-
-	int year = 1980;
-	auto itFound3 = std::find_if(
-		movies.cbegin(),
-		movies.cend(),
+	find_predicate_aux(
+		movies,
 		[year](const auto& movie)
 		{
 			return movie.getYear() == year;
 		});
-	if (itFound3 != movies.cend()) {
-		std::cout << "Movie found: " << *itFound3 << std::endl;
-	}
-	else {
-		std::cout << "Movie not found" << std::endl;
-	}
-
-	auto itFound4 = std::find_if(
-		movies.cbegin(),
-		movies.cend(),
+	find_predicate_aux(
+		movies,
 		// captures: movieForm by ref, year by copy
-		[&movieForm,year](const auto& movie)
+		[&movieForm, year](const auto& movie)
 		{
 			return (movie.getTitle() == movieForm.getTitle()) || (movie.getYear() == year);
 		});
-	if (itFound4 != movies.cend()) {
-		std::cout << "Movie found: " << *itFound4 << std::endl;
-	}
-	else {
-		std::cout << "Movie not found" << std::endl;
-	}
-
-	auto itFound5 = std::find_if(
-		movies.cbegin(),
-		movies.cend(),
-		// captures: tout le monde by ref [&], by copy [=]
-		[&](const auto& movie)
-		{
-			return (movie.getTitle() == movieForm.getTitle()) || (movie.getYear() == year);
-		});
-	if (itFound5 != movies.cend()) {
-		std::cout << "Movie found: " << *itFound5 << std::endl;
-	}
-	else {
-		std::cout << "Movie not found" << std::endl;
-	}
-
-	auto itFound6 = std::find_if(
-		movies.cbegin(),
-		movies.cend(),
+	//auto predicate5 : tout le monde by ref [&], by copy [=]
+	std::function<bool(const Movie&)> predicate5 = [&](const auto& movie)
+	{
+		return (movie.getTitle() == movieForm.getTitle()) || (movie.getYear() == year);
+	};
+	find_predicate_aux(
+		movies,
+		predicate5);
+	find_predicate_aux(
+		movies,
+		filterYear1983);
+	find_predicate_aux(
+		movies,
 		filterYear1983auto);
-	if (itFound6 != movies.cend()) {
-		std::cout << "Movie found: " << *itFound6 << std::endl;
-	}
-	else {
-		std::cout << "Movie not found" << std::endl;
-	}
 }
 
 int main()
