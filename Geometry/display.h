@@ -17,7 +17,7 @@ std::ostream& write(std::ostream& out, InputIt first, InputIt last) {
 		++first;
 	}
 	while (first != last) {
-		out << *first << ",";
+		out << "," << * first;
 		++first;
 	}
 	out << "]";
