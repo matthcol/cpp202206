@@ -24,19 +24,19 @@ Movie::~Movie()
 	std::clog << "Movie destroyed: " << this << std::endl;
 }
 
-bool Movie::operator==(const Movie& other)
+bool Movie::operator==(const Movie& other) const
 {
 	// TODO (opt) : check if same object in memory
 	return (this->mTitle == other.mTitle)
 		&& (this->mYear == other.mYear);
 }
 
-bool Movie::operator!=(const Movie& other)
+bool Movie::operator!=(const Movie& other) const
 {
 	return !(*this == other);
 }
 
-bool Movie::operator<(const Movie& other)
+bool Movie::operator<(const Movie& other)  const
 {
 	if (this->mYear == other.mYear) 
 	{
@@ -48,17 +48,17 @@ bool Movie::operator<(const Movie& other)
 	}
 }
 
-bool Movie::operator<=(const Movie& other)
+bool Movie::operator<=(const Movie& other) const
 {
 	return (*this < other) || (*this == other);
 }
 
-bool Movie::operator>(const Movie& other)
+bool Movie::operator>(const Movie& other) const
 {
 	return !((*this < other) || (*this == other));
 }
 
-bool Movie::operator>=(const Movie& other)
+bool Movie::operator>=(const Movie& other) const
 {
 	return !(*this < other);
 }

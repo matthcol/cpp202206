@@ -17,12 +17,12 @@ public:
 	virtual ~Movie();
 
 	//Movie& operator=(const Movie& other) = delete;
-	bool operator==(const Movie& other);
-	bool operator!=(const Movie& other);
-	bool operator<(const Movie& other);
-	bool operator<=(const Movie& other);
-	bool operator>(const Movie& other);
-	bool operator>=(const Movie& other);
+	bool operator==(const Movie& other) const;
+	bool operator!=(const Movie& other) const;
+	bool operator<(const Movie& other) const;
+	bool operator<=(const Movie& other) const;
+	bool operator>(const Movie& other) const;
+	bool operator>=(const Movie& other) const;
 
 	const std::string& getTitle() const;
 	void setTitle(const std::string& title);

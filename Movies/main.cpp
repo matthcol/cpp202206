@@ -110,7 +110,7 @@ void test_find() {
 	auto itLast = movies.cend();
 	auto itFound = itLast; // initialized value not used
 	do {
-		//itFound = std::find(itFirst, itLast, movieForm);
+		itFound = std::find(itFirst, itLast, movieForm);
 		std::cout << "Found movie" << *itFound << std::endl;
 		itFirst = itFound + 1;
 	} while (itFound != itLast);
@@ -207,6 +207,44 @@ void test_find_predicate() {
 		filterYear1983auto);
 }
 
+template<class InputIt>
+void displayIterableLines(
+	InputIt first, InputIt last, 
+	const std::string& title, const std::string& bullet)
+{
+	std::cout << title << std::endl;
+	while (first != last) {
+		std::cout << '\t' << bullet << *first << std::endl;
+		++first;
+	}
+	std::cout << std::endl;
+
+}
+
+void test_sort() {
+	// movies in a vector
+	Movie movie1("Star Wars IV", 1977, 120);
+	Movie movie2("Star Wars V", 1980, 120);
+	Movie movie3("Saturday Night Fever", 1977, 120);
+	Movie movie4("Star Wars VI", 1983, 120);
+	Movie movie5("Rogue One: A Star Wars Story", 2016, 120);
+	std::vector<Movie> movies{ movie5, movie4, movie2, movie3, movie1 };
+
+	std::sort(movies.begin(), movies.end());
+	displayIterableLines(movies.begin(), movies.end(), "Sorted by default order <:", "* ");
+
+	std::sort(movies.begin(), movies.end(),
+		[](const auto& m1, const auto& m2) 
+		{
+			return m1.getTitle() < m2.getTitle(); 
+		});
+	displayIterableLines(movies.begin(), movies.end(), "Sorted by title asc", "~ ");
+
+	std::sort(movies.begin(), movies.end(), std::greater<Movie&>());
+	displayIterableLines(movies.begin(), movies.end(), "Sorted by default order reversed", "- ");
+}
+
+
 int main()
 {
 	//test_create_movies();
@@ -214,6 +252,7 @@ int main()
 	//test_operators_string();
 	//test_operators_movie();
 	//test_find();
-	test_find_predicate();
+	//test_find_predicate();
+	test_sort();
 	return EXIT_SUCCESS;
 }
