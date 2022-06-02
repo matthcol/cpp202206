@@ -10,6 +10,12 @@ public:
 	virtual void translate(double deltaX, double deltaY) override;
 	double distance(const Point2D& other) const;
 
+	virtual std::string toString() const override;
+
+	double getX() const;
+	void setX(double x);
+	double getY() const;
+	void setY(double y);
 private:
 	double mX;
 	double mY;

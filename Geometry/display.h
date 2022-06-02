@@ -42,3 +42,7 @@ std::ostream& operator<<(std::ostream& out, const std::list<T>& list) {
 std::ostream& operator<<(std::ostream& out, const Form& form) {
 	return out << form.toString();
 }
+
+std::ostream& operator<<(std::ostream& out, const Form* form_ptr) {
+	return out << form_ptr->toString();
+}
