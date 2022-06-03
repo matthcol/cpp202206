@@ -2,6 +2,8 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <algorithm>
+#include <numeric>
 
 #include "Form.h"
 #include "Point2D.h"
@@ -151,8 +153,33 @@ void test_smart_pointer_shared() {
 
 void test_map_reduce() {
 	//1. vecteur de point pondere
+	std::vector<WeightedPoint> wpoints{
+		WeightedPoint("A",1.0,2.0,1.0),
+		WeightedPoint("B",2.0,1.0,2.0),
+		WeightedPoint("C",3.0,-1.0,3.0),
+		WeightedPoint("D",4.0,-2.0,4.0),
+		WeightedPoint("E",5.0,-3.0,5.0)
+	};
+	std::cout << "Weighted points: " << wpoints << std::endl;
 	//2. transformer en un vecteur de poids
+	std::vector<double> weights(wpoints.size());
+	std::transform(
+		wpoints.cbegin(), wpoints.cend(),  // source
+		weights.begin(),	// dest
+		[](const auto& wp) {return wp.getWeight(); } // function
+		// WeightedPoint::getWeight // NOK in C++
+	);
+	std::cout << "Weights: " << weights << std::endl;
 	//3. calculer la somme des poids
+	double totalWeights = std::accumulate(
+		weights.cbegin(), weights.cend(), 0.0);
+	std::cout << "Total weight: " << totalWeights << std::endl;
+	//4. produits
+	double prodWeights = std::accumulate(
+		weights.cbegin(), weights.cend(), 
+		1.0, 
+		std::multiplies<double>());
+	std::cout << "Product of weights: " << prodWeights << std::endl;
 }
 
 
@@ -164,5 +191,6 @@ int main() {
 	//test_destructor3();
 	//test_destructor4();
 	//test_smart_pointer();
-	test_smart_pointer_shared();
+	//test_smart_pointer_shared();
+	test_map_reduce();
 }
