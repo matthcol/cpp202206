@@ -5,6 +5,7 @@
 class Point2D: public Form
 {
 public:
+	Point2D() = default;
 	Point2D(const std::string& name, double x, double y);
 	virtual ~Point2D();
 

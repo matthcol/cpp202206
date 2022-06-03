@@ -4,6 +4,7 @@ class WeightedPoint :
     public Point2D
 {
 public:
+    WeightedPoint() = default;
     WeightedPoint(const std::string& name, double x, double y, double weight);
     virtual ~WeightedPoint();
 

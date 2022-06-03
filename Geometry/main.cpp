@@ -1,9 +1,13 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <algorithm>
 #include <numeric>
+#include <optional>
+#include <variant>
+#include <map>
 
 #include "Form.h"
 #include "Point2D.h"
@@ -151,6 +155,37 @@ void test_smart_pointer_shared() {
   //    => use_count 1 -> 0
   //    => call delete underlying object Point2D
 
+//template<class InputIt>
+//double minValue(InputIt first, InputIt last) {
+//	auto itFound = std::min_element(first, last);
+//	if (itFound != last) {
+//		// found
+//		return std::optional<double>(*itFound);
+//	}
+//	else {
+//		return std::nullopt;
+//	}
+//}
+
+//void handle_optional(const std::optional<double>& optDouble) {
+//	if (optDouble.has_value()) {
+//		std::cout << *optDouble << std::endl;
+//		std::cout << optDouble.value() << std::endl;
+//	}
+//	else {
+//		std::cout << "No double in the box" << std::endl;
+//	}
+//	std::cout << "Final value: " << optDouble.value_or(33.33333) << std::endl;
+//}
+
+//void test_optional()
+//{
+//	std::optional<double> optDouble{ 12.2 };
+//	std::optional<double> emptyDouble;
+//	handle_optional(optDouble);
+//	handle_optional(emptyDouble);
+//}
+
 void test_map_reduce() {
 	//1. vecteur de point pondere
 	std::vector<WeightedPoint> wpoints{
@@ -180,8 +215,95 @@ void test_map_reduce() {
 		1.0, 
 		std::multiplies<double>());
 	std::cout << "Product of weights: " << prodWeights << std::endl;
+	//5. min weight optional
 }
 
+//void testVariant() {
+//	std::variant<int, std::string> data(12);
+//	std::cout << std::get<int>(data) << std::endl;
+//	// std::cout << std::get<std::string>(data) << std::endl; // std::bad_variant_access
+//	data = "Toulouse";
+//	std::cout << std::get<std::string>(data) << std::endl;
+//}
+
+void test_map_ptr() {
+	Point2D ptA("A", 1.0, 2.0);
+	Point2D ptB("B", 1.0, 2.0);
+	Point2D ptC("C", 1.0, 2.0);
+	Point2D ptD("D", 1.0, 2.0);
+	std::map<std::string, Point2D*> indexPoints{
+		{"B", &ptB},
+		{"A", &ptA},
+		{"D", &ptD},
+	};
+	std::cout << std::endl;
+	write(std::cout, indexPoints.cbegin(), indexPoints.cend());
+	std::cout << std::endl;
+
+	indexPoints["C"] = &ptC;
+	auto pt_ptr = indexPoints["A"];
+	std::cout << "Point with key A: " << *pt_ptr << std::endl;
+
+	std::cout << std::endl;
+	write(std::cout, indexPoints.cbegin(), indexPoints.cend());
+	std::cout << std::endl;
+
+}
+
+void test_map_copy() {
+	Point2D ptA("A", 1.0, 2.0);
+	Point2D ptB("B", 1.0, 2.0);
+	Point2D ptC("C", 1.0, 2.0);
+	Point2D ptD("D", 1.0, 2.0);
+	std::map<std::string, Point2D> indexPoints{
+		{"B", ptB},
+		{"A", ptA},
+		{"C", ptC},
+	};
+	std::cout << std::endl;
+	write(std::cout, indexPoints.cbegin(), indexPoints.cend());
+	std::cout << std::endl;
+
+	indexPoints["D"] = ptD;
+	auto pt = indexPoints["A"];
+	std::cout << "Point with key A: " << pt << std::endl;
+
+	std::cout << std::endl;
+	write(std::cout, indexPoints.cbegin(), indexPoints.cend());
+	std::cout << std::endl;
+}
+
+void test_write_file() {
+	std::vector<WeightedPoint> wpoints{
+		WeightedPoint("A",1.0,2.0,1.0),
+		WeightedPoint("B",2.0,1.0,2.0),
+		WeightedPoint("C",3.0,-1.0,3.0),
+		WeightedPoint("D",4.0,-2.0,4.0),
+		WeightedPoint("E",5.0,-3.0,5.0)
+	};
+	{
+		int x = 3;
+		std::ofstream out("wpoints.csv");
+		out << "Name,X,Y,Weight" << std::endl;
+		// write(out, wpoints.cbegin(), wpoints.cend());
+		std::for_each(wpoints.cbegin(), wpoints.cend(),
+			[&out](const auto& wp){
+				out << wp.getName()
+					<< "," << wp.getX()
+					<< "," << wp.getY()
+					<< "," << wp.getWeight()
+					<< std::endl;
+			});
+		// out.close();
+	} // => auto out.close by its destructor
+	std::ifstream in("wpoints.csv");
+	char buf[200];
+	// std::fill(std::begin(buf), std::end(buf), 0);
+	while (in.getline(buf, 200)) {
+		std::string line(buf);
+		std::cout << "Line CSV: " << line << std::endl;
+	}
+}
 
 int main() {
 	//test_vector_forms();
@@ -192,5 +314,10 @@ int main() {
 	//test_destructor4();
 	//test_smart_pointer();
 	//test_smart_pointer_shared();
-	test_map_reduce();
+	//test_map_reduce();
+	/*test_optional();*/
+	//testVariant();
+	//test_map_copy();
+	//test_map_ptr();
+	test_write_file();
 }

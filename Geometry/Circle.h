@@ -11,6 +11,7 @@ class Circle:
 public:
 	static const double PI;
 
+	Circle() = default;
 	Circle(const std::string& name, const Point2D& center, double radius);
 	virtual ~Circle();
 

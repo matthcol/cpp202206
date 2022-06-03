@@ -4,6 +4,7 @@
 class Form
 {
 protected:
+	Form() = default;
 	Form(const std::string& name);
 public:
 	virtual ~Form();

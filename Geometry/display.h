@@ -46,3 +46,11 @@ std::ostream& operator<<(std::ostream& out, const Form& form) {
 std::ostream& operator<<(std::ostream& out, const Form* form_ptr) {
 	return out << form_ptr->toString();
 }
+
+template <class T, class U>
+std::ostream& operator<<(std::ostream& out, const std::pair<T,U>& pair) {
+	return out << "(" << pair.first
+		<< "," << pair.second << ")";
+}
+
+
