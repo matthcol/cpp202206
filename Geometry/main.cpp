@@ -1,6 +1,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <memory>
 
 #include "Form.h"
 #include "Point2D.h"
@@ -108,11 +109,60 @@ void test_destructor4() {
 	delete m;
 }
 
+std::unique_ptr<Point2D> compute_with_smart_pointer(std::unique_ptr<Point2D> point_ptr) {
+	std::cout << "compute 1: " << point_ptr << std::endl;
+	point_ptr->translate(2.0, -2.0);
+	std::cout << "compute 2: " << point_ptr << std::endl;
+	return std::move(point_ptr);
+}
+
+void test_smart_pointer() {
+	std::unique_ptr<Point2D> ptA_ptr(new Point2D("A", 1.0, 3.0));
+	std::cout << "test 1: " << ptA_ptr << std::endl;
+	ptA_ptr = compute_with_smart_pointer(std::move(ptA_ptr));
+	std::cout << "test 2: return from subroutine" << std::endl;
+	std::cout << "test 3: " << ptA_ptr << std::endl;
+} // smart pointer pop from stack 
+  //    => call destructor of smart pointer
+  //    => call delete underlying object Point2D
+
+void compute_with_shared_pointer(std::shared_ptr<Point2D> point_ptr) {
+	std::cout << "compute 1: " << point_ptr
+		<< " #" << point_ptr.use_count() << std::endl;
+	point_ptr->translate(2.0, -2.0);
+	std::cout << "compute 2: " << point_ptr
+		<< " #" << point_ptr.use_count() << std::endl;
+} // pop shared ptr from stack 
+// => destructor
+// => use_count 2 -> 1 (nothing to delete)
+
+void test_smart_pointer_shared() {
+	std::shared_ptr<Point2D> ptA_ptr(new Point2D("A", 1.0, 3.0));
+	std::cout << "test 1: " << ptA_ptr 
+		<< " #" << ptA_ptr.use_count() << std::endl;
+	compute_with_shared_pointer(ptA_ptr);
+	std::cout << "test 2: return from subroutine" << std::endl;
+	std::cout << "test 3: " << ptA_ptr
+		<< " #" << ptA_ptr.use_count() << std::endl;
+} // smart pointer pop from stack 
+  //    => call destructor of smart pointer
+  //    => use_count 1 -> 0
+  //    => call delete underlying object Point2D
+
+void test_map_reduce() {
+	//1. vecteur de point pondere
+	//2. transformer en un vecteur de poids
+	//3. calculer la somme des poids
+}
+
+
 int main() {
 	//test_vector_forms();
 	//test_PI();
-	test_destructor1();
-	test_destructor2();
-	test_destructor3();
-	test_destructor4();
+	//test_destructor1();
+	//test_destructor2();
+	//test_destructor3();
+	//test_destructor4();
+	//test_smart_pointer();
+	test_smart_pointer_shared();
 }

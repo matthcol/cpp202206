@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <memory>
 
 class SmartBuffer
 {
@@ -9,7 +10,7 @@ public:
 	int& operator[](uint64_t index);
 	const int& operator[](uint64_t index) const;
 private:
-	int* mData;
+	std::unique_ptr<int[]> mData;
 	uint64_t mSize;
 };
 

@@ -1,14 +1,14 @@
 #include "SmartBuffer.h"
 
 SmartBuffer::SmartBuffer(uint64_t size) :
-    mData(nullptr), mSize(size)
+    mData(new int[size]), mSize(size)
 {
-    mData = new int[size];
 }
 
 SmartBuffer::~SmartBuffer()
 {
-    delete[] mData;
+    // mData destroyed automatically 
+    // and call delete og underlying array
 }
 
 int& SmartBuffer::operator[](uint64_t index)
