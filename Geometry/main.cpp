@@ -28,6 +28,10 @@ void test_forms() {
 	delete fD_ptr;
 }
 
+void handle_mesurable(Mesurable2D& mesurable) {
+
+}
+
 void test_vector_forms() {
 	Point2D ptA("A", 3.5, 4.25);
 	Point2D ptB("B", 3.6, 3.25);
@@ -60,9 +64,55 @@ void test_vector_forms() {
 	}
 	std::cout << "Total weight: " << totalWeight << std::endl;
 
+	double totalSurface = 0;
+	for (const Form* f_ptr : formPtrs) {
+		if (const Mesurable2D* mesurable_ptr = dynamic_cast<const Mesurable2D*>(f_ptr)) {
+			totalSurface += mesurable_ptr->surface();
+		}
+	}
+	std::cout << "Total surface: " << totalSurface << std::endl;
+
+	std::cout << "Weighted point: " << ptE.toStringNotVirtual() << std::endl;
+	Point2D& ptEref = ptE;
+	std::cout << "Weighted point as a Point2D: " << ptEref.toStringNotVirtual() << std::endl;
+
+}
+
+void test_PI() {
+	std::cout << "PI: " << Circle::PI << std::endl;
 }
 
 
+void test_destructor1() {
+	WeightedPoint* wp = new WeightedPoint("A", 1.0, 2.0, 3.0);
+	std::cout << " - test destructor wp as a wp" << std::endl;
+	delete wp;
+}
+
+void test_destructor2() {
+	Point2D* pt = new WeightedPoint("A", 1.0, 2.0, 3.0);
+	std::cout << " - test destructor wp as a pt" << std::endl;
+	delete pt;
+}
+
+void test_destructor3() {
+	Form* f = new WeightedPoint("A", 1.0, 2.0, 3.0);
+	std::cout << " - test destructor wp as a f" << std::endl;
+	delete f;
+}
+
+void test_destructor4() {
+	Point2D pt("A", 1.0, 1.0);
+	Mesurable2D* m = new Circle("C", pt, 1.0);
+	std::cout << " - test destructor c as m2d" << std::endl;
+	delete m;
+}
+
 int main() {
-	test_vector_forms();
+	//test_vector_forms();
+	//test_PI();
+	test_destructor1();
+	test_destructor2();
+	test_destructor3();
+	test_destructor4();
 }

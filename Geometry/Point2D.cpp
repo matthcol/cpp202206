@@ -2,10 +2,16 @@
 
 #include <sstream>
 #include <cmath>
+#include <iostream>
 
 Point2D::Point2D(const std::string& name, double x, double y):
 	Form(name), mX(x), mY(y)
 {
+}
+
+Point2D::~Point2D()
+{
+	std::clog << "Point2D destroyed: " << getName() << std::endl;
 }
 
 double Point2D::getX() const
@@ -46,6 +52,11 @@ std::string Point2D::toString() const
 		<< mY
 		<< ")"
 		).str();
+}
+
+std::string Point2D::toStringNotVirtual() const
+{
+	return "PT2D";
 }
 
 double Point2D::distance(const Point2D& other) const

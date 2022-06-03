@@ -1,10 +1,22 @@
 #include "Circle.h"
 
 #include <sstream>
+#include <cmath>
+#include <numbers> // C++20
+#include <iostream>
+
+//const double Circle::PI = 4.0*atan(1.0);
+const double Circle::PI = acos(-1.0);
+//const double Circle::PI = std::numbers::pi;
 
 Circle::Circle(const std::string& name, const Point2D& center, double radius):
     Form(name),Mesurable2D(),mCenter(center),mRadius(radius)
 {
+}
+
+Circle::~Circle()
+{
+    std::clog << "Circle destroyed: " << getName() << std::endl;
 }
 
 double Circle::getRadius() const
@@ -29,12 +41,12 @@ void Circle::setCenter(const Point2D& center)
 
 double Circle::surface() const
 {
-    return 0.0;
+    return PI*pow(mRadius,2.0); // PI.r^2
 }
 
 double Circle::perimeter() const
 {
-    return 0.0;
+    return 0.0; // 2.PI.r
 }
 
 void Circle::translate(double deltaX, double deltaY)

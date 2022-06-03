@@ -9,7 +9,10 @@ class Circle:
 	public Mesurable2D
 {
 public:
+	static const double PI;
+
 	Circle(const std::string& name, const Point2D& center, double radius);
+	virtual ~Circle();
 
 	double getRadius() const;
 	void setRadius(double radius);
